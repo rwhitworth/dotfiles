@@ -1,0 +1,33 @@
+[
+   {
+      "content" : "[{\"content\":\"Ryan Whitworth\",\"metadata\":{\"core\":{\"update_time\":\"2013-08-26T17:07:35Z\",\"creator\":\"metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065\",\"valid\":1,\"resource\":\"metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065\",\"guid\":\"00ea0640-0e72-11e3-8ee3-df0a9c418065\",\"creation_time\":\"2013-08-26T17:07:35Z\",\"type\":\"Metabase-User-FullName\",\"schema_version\":1}}},{\"content\":\"me@ryanwhitworth.com\",\"metadata\":{\"core\":{\"update_time\":\"2013-08-26T17:07:35Z\",\"creator\":\"metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065\",\"valid\":1,\"resource\":\"metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065\",\"guid\":\"00ea0816-0e72-11e3-8ee3-df0a9c418065\",\"creation_time\":\"2013-08-26T17:07:35Z\",\"type\":\"Metabase-User-EmailAddress\",\"schema_version\":1}}}]",
+      "metadata" : {
+         "core" : {
+            "update_time" : "2013-08-26T17:07:35Z",
+            "creator" : "metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065",
+            "valid" : 1,
+            "resource" : "metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065",
+            "guid" : "00e8548a-0e72-11e3-8ee3-df0a9c418065",
+            "creation_time" : "2013-08-26T17:07:35Z",
+            "type" : "Metabase-User-Profile",
+            "schema_version" : 1
+         }
+      }
+   },
+   {
+      "content" : "111068aa",
+      "metadata" : {
+         "core" : {
+            "update_time" : "2013-08-26T17:07:35Z",
+            "creator" : "metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065",
+            "valid" : 1,
+            "resource" : "metabase:user:00e8548a-0e72-11e3-8ee3-df0a9c418065",
+            "guid" : "00ea0d5c-0e72-11e3-8ee3-df0a9c418065",
+            "creation_time" : "2013-08-26T17:07:35Z",
+            "type" : "Metabase-User-Secret",
+            "schema_version" : 1
+         }
+      }
+   }
+]
+
