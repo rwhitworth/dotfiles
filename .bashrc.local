@@ -19,6 +19,8 @@ then
 	alias w='w -f'
 fi
 
+alias smoke='perl -MCPAN::Reporter::Smoker -e start'
+
 # bash history items borrowed from https://github.com/fotinakis/bashrc/blob/master/init.sh
 # Eternal bash history.
 # ---------------------
