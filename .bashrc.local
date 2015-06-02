@@ -48,7 +48,14 @@ histfreq() {
   history | awk '{a[$2]++}END{for(i in a){print a[i] " " i}}' | sort -rn | head -n 15
 }
 
-
+#################### Shell completion functions
+# set completes with set options
+complete -A setopt set
+# shopt completes with shopt options
+complete -A shopt shopt
+# other job commands
+complete -j -P '"%' -S '"' fg jobs
+####################
 
 # misc aliases and functions
 # ---------------------
