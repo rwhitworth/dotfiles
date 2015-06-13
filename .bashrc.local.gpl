@@ -44,3 +44,45 @@ function valid_mask() {
   printf -- " 0 128 192 224 240 248 252 254 255 " |grep -q " $i4 " || return 1
   return 0
 }
+
+# return the number of possible IPs in a network based in the cidr mask
+#   this intentionally does not account for the network and broadcast address
+#
+# required:
+#   $1   X (where X is the CIDR mask: 0 <= X <= 32 )
+#
+# Source: https://github.com/wstrucke/scs/blob/master/scs.sh
+function cdr2size {
+  test $# -ne 1 && return 1
+  test "$1" != "${1/[^0-9]/}" && return 1
+  if [[ $1 -lt 0 || $1 -gt 32 ]]; then return 1; fi
+  echo $(( 1 << ( ( $1 - 32 ) * -1 ) ))
+  return 0
+}
+
+# check if a host is responding on the network
+#   use ssh port (tcp/22) since that is almost exclusively how we manage them
+#
+# requires:
+#   $1	host name or ip
+#
+# optional:
+#   $2	tcp port (default is 22)
+#   $3  timeout (default is 2 seconds)
+#
+# Source: https://github.com/wstrucke/scs/blob/master/scs.sh
+function check_host_alive {
+  local Port Timeout Pid C=0 Result=0
+  if [ $# -eq 0 ]; then return 1; fi
+  if [ $# -eq 2 ]; then Port=$2; else Port=22; fi
+  if [ $# -eq 3 ]; then Timeout=$3; else Timeout=2; fi
+  if [ "$HostOS" == "mac" ]; then
+    ( ( exec 3<>/dev/tcp/$1/$Port ) & Pid=$! ; \
+      while [[ $( ps -p $Pid |wc -l ) -gt 0 && $C -lt $((Timeout*5)) ]]; do sleep .2; C=$((C+1)); done; \
+      if [[ $( ps -p $Pid |wc -l ) -gt 0 ]]; then Result=1; kill $Pid; fi; \
+    ) >/dev/null 2>&1
+    return $Result
+  else
+    nc -z -w $Timeout $1 $Port &>/dev/null && return 0 || return 1
+  fi
+}
