@@ -145,5 +145,11 @@ then
   source ~/.bashrc.local.gpl
 fi
 
+if [[ -e ~/.bashrc.local.cc ]]
+then
+  source ~/.bashrc.local.cc
+fi
+
+
 #unset _RHVERSION
 #unset _CYGWIN
