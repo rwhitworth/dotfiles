@@ -35,3 +35,26 @@ function compare_version {
   done
   return 0
 }
+
+# get the network address for a given ip and subnet mask
+#
+# SOURCE:
+# http://stackoverflow.com/questions/15429420/given-the-ip-and-netmask-how-can-i-calculate-the-network-address-using-bash
+#
+# This is completely equivilent to `ipcalc -n $1 $2`, but that is not
+#   necessarily available on all operating systems.
+#
+# required:
+#   $1  ip address
+#   $2  subnet mask
+#
+function get_network {
+  test $# -eq 2 || return 1
+  valid_ip $1 || return 1
+  local J="$2"
+  test "$2" == "${2/[^0-9]/}" && J=$( cdr2mask $2 )
+  IFS=. read -r i1 i2 i3 i4 <<< "$1"
+  IFS=. read -r m1 m2 m3 m4 <<< "$J"
+  printf "%d.%d.%d.%d\n" "$((i1 & m1))" "$(($i2 & m2))" "$((i3 & m3))" "$((i4 & m4))"
+  return 0
+}
