@@ -58,3 +58,34 @@ function get_network {
   printf "%d.%d.%d.%d\n" "$((i1 & m1))" "$(($i2 & m2))" "$((i3 & m3))" "$((i4 & m4))"
   return 0
 }
+
+# convert a decimal value to an ipv4 address
+#
+# SOURCE: http://stackoverflow.com/questions/10768160/ip-address-converter
+#
+function dec2ip {
+  local ip delim dec=$1
+  for e in {3..0}; do
+    ((octet = dec / (256 ** e) ))
+    ((dec -= octet * 256 ** e))
+    ip+=$delim$octet
+    delim=.
+  done
+  printf '%s\n' "$ip"
+  return 0
+}
+
+# convert an ip address to decimal value
+#
+# SOURCE: http://stackoverflow.com/questions/10768160/ip-address-converter
+#
+# requires:
+#   $1  ip address
+#
+function ip2dec {
+  local a b c d ip=$1
+  IFS=. read -r a b c d <<< "$ip"
+  printf '%d\n' "$((a * 256 ** 3 + b * 256 ** 2 + c * 256 + d))"
+  return 0
+}
+
