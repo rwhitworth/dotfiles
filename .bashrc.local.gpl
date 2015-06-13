@@ -86,3 +86,97 @@ function check_host_alive {
     nc -z -w $Timeout $1 $Port &>/dev/null && return 0 || return 1
   fi
 }
+
+
+# register ssh public key on a remote host
+#
+# requires:
+#  --host <name>         remote host name or ip
+#  --user <name>         remote user name
+#  --key </path/to/key>  local path to ssh private key
+#
+# optional:
+#  --sudo <name>         user to access server and elevate privileges
+#
+# Source: https://github.com/wstrucke/scs/blob/master/scs.sh
+function register_ssh_key {
+  local PrivateKey PublicKey Pass System RemoteUser SudoUser AccessUser Debug=0
+
+  # process arguments
+  while [ $# -gt 0 ]; do case $1 in
+    --debug) Debug=1;;
+    --host) System="$2";;
+    --key) PrivateKey="$2";;
+    --sudo) SudoUser="$2";;
+    --user) RemoteUser="$2";;
+    *) err "Invalid argument provided to register_ssh_key";;
+  esac; shift 2; done
+
+  if [[ -z "$PrivateKey" || -z "$System" || -z "$RemoteUser" ]]; then err "Invalid arguments provided to register_ssh_key"; fi
+  check_host_alive $System || err "Unable to connect to remote host"
+
+  # validate and load private key
+  test -s "$PrivateKey" || err "Unable to access private key file"
+  PublicKey=$( ssh-keygen -y -P '' -q -f "$PrivateKey" 2>/dev/null )
+  if [ $? -eq 1 ]; then err "Unable to load private key file"; fi
+
+  if [[ -n "$SudoUser" ]]; then AccessUser=$SudoUser; else AccessUser=$RemoteUser; fi
+
+  # get the ssh password
+  read -sp "Password [$AccessUser]: " Pass; echo
+  test -z "$Pass" && err "A password is required to log in to the remote server"
+
+  # this can be done by adding a conditional to the expect script instead of having it twice,
+  #  but I don't feel like looking up and escaping the syntax for that right now...
+  #
+  if [[ -n "$SudoUser" ]]; then
+    expect -c "
+set timeout 10
+exp_internal $Debug
+log_user $Debug
+match_max 100000
+spawn ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=keyboard-interactive,password -l $AccessUser $System
+expect {
+  \"*?assword:*\" { send -- \"$Pass\\r\" }
+  eof { exit }
+  timeout { exit }
+}
+expect -regexp \".*(\\\$|#).*\"
+send -- \"sudo su - $RemoteUser\\r\"
+expect {
+  \".*?assword for $AccessUser:*\" { send -- \"$Pass\\r\" }
+  eof { exit }
+  timeout { exit }
+}
+expect -regexp \".*(\\\$|#).*\"
+send -- \"grep -q \\\"$PublicKey\\\" .ssh/authorized_keys 2>/dev/null\\r\"
+expect -regexp \".*(\\\$|#).*\"
+send -- \"if \[ \\\$? -eq 1 \]; then echo \\\"$PublicKey\\\" >>.ssh/authorized_keys; fi\\r\"
+expect -regexp \".*(\\\$|#).*\"
+send -- \"exit\\r\"
+expect -regexp \".*(\\\$|#).*\"
+send -- \"exit\\r\"
+expect eof
+"
+  else
+    expect -c "
+set timeout 10
+exp_internal $Debug
+log_user $Debug
+match_max 100000
+spawn ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=keyboard-interactive,password -l $AccessUser $System
+expect {
+  \"*?assword:*\" { send -- \"$Pass\\r\" }
+  eof { exit }
+  timeout { exit }
+}
+expect -regexp \".*(\\\$|#).*\"
+send -- \"grep -q \\\"$PublicKey\\\" .ssh/authorized_keys 2>/dev/null\\r\"
+expect -regexp \".*(\\\$|#).*\"
+send -- \"if \[ \\\$? -eq 1 \]; then echo \\\"$PublicKey\\\" >>.ssh/authorized_keys; fi\\r\"
+expect -regexp \".*(\\\$|#).*\"
+send -- \"exit\\r\"
+expect eof
+"
+  fi
+}
