@@ -156,6 +156,19 @@ function mask2cdr {
 }
 
 
+# is the host up and responding to ping?
+# usage: isup <IP>
+# example: isup 8.8.8.8
+# Not inteded to be used by scripts, but by humans instead
+function isup {
+  hostip=$1
+  while [[ $(ping -t 2 -c 3 $1) == 0 ]]
+  do 
+    sleep 15
+  done
+  echo Server probably up
+}
+
 if [[ -e ~/.bashrc.local.gpl ]]
 then
   source ~/.bashrc.local.gpl
