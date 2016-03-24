@@ -162,7 +162,7 @@ function mask2cdr {
 # Not inteded to be used by scripts, but by humans instead
 function isup {
   hostip=$1
-  while [[ $(ping -t 2 -c 3 $1) == 0 ]]
+  while [[ $(ping -t 2 -c 3 $1) != 0 ]]
   do 
     sleep 15
   done
