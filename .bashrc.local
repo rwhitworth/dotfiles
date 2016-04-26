@@ -66,7 +66,7 @@ alias e='date +"%s"'
 alias ls='ls -la'
 alias sl='ls'
 alias docker-ip="docker inspect --format '{{.NetworkSettings.IPAddress}}'"
-
+alias dkill="for i in \$(docker ps --format=\'{{.ID}}\') ; do echo Killing \$i ; docker kill \$i ; done"
 
 # Returns the first element in a list.
 #     first_in_list (a b c)
@@ -156,7 +156,6 @@ function mask2cdr {
   return 0
 }
 
-
 # is the host up and responding to ping?
 # usage: isup <IP>
 # example: isup 8.8.8.8
@@ -170,6 +169,15 @@ function isup {
     sleep 5
   done
   echo Server probably up
+}
+
+# show current git branch, usable in PS1 variable
+# PS1="\w\$(current_git_branch) "
+function current_git_branch {
+  local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null);
+  if [[ -n $branch ]];then
+    echo " [$branch]";
+  fi
 }
 
 if [[ -e ~/.bashrc.local.gpl ]]
