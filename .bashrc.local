@@ -70,7 +70,7 @@ alias e='date +"%s"'
 alias ls='ls -la'
 alias sl='ls'
 alias docker-ip="docker inspect --format '{{.NetworkSettings.IPAddress}}'"
-alias dkill="for i in \$(docker ps --format=\'{{.ID}}\') ; do echo Killing \$i ; docker kill \$i ; done"
+alias dkill="for i in \$(docker ps -a --format=\'{{.ID}}\') ; do echo Killing \$i ; docker rm -f \$i ; done"
 
 # Returns the first element in a list.
 #     first_in_list (a b c)
