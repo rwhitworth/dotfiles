@@ -71,6 +71,7 @@ alias ls='ls -la'
 alias sl='ls'
 alias docker-ip="docker inspect --format '{{.NetworkSettings.IPAddress}}'"
 alias dkill="for i in \$(docker ps -a --format=\'{{.ID}}\') ; do echo Killing \$i ; docker rm -f \$i ; done"
+alias nonekill='for i in $(docker images | grep none | awk "{ print $3 }") ; do docker rmi $i ; done'
 
 # Returns the first element in a list.
 #     first_in_list (a b c)
@@ -185,20 +186,20 @@ function parse_git_status {
     local ST=$(git status --short 2> /dev/null)
     if [ -n "$ST" ]
     then 
-      echo -n $_RED
+      printf "\001%s\002" $_RED
     else 
-      echo -n $_GREEN
+      printf "\001%s\002" $_GREEN
     fi
   fi
 }
 
 # show current git branch, usable in PS1 variable
-# PS1="\w\$(current_git_branch) "
+# PS1='\W$(current_git_branch) '
 function current_git_branch {
   local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
   if [[ -n $branch ]]
   then
-    echo " $(parse_git_status)[$branch]$_WHITE"
+    printf " %s[%s]\001%s\002" $(parse_git_status) $branch $_WHITE
   fi 
 }
 
