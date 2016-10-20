@@ -167,11 +167,12 @@ function mask2cdr {
 # Not inteded to be used by scripts, but by humans instead
 function isup {
   hostip=$1
-  export hostip
-  while [[ $(ping -t 2 -c 3 $hostip &> /dev/null) -gt 0 ]]
+  $(ping -c 3 $hostip &> /dev/null)
+  while [[ $? -gt 0 ]]
   do
     echo -n .
     sleep 5
+    $(ping -c 3 $hostip &> /dev/null)
   done
   echo Server probably up
 }
