@@ -204,6 +204,11 @@ function current_git_branch {
   fi 
 }
 
+# https://superuser.com/questions/419775/with-bash-iterm2-how-to-name-tabs
+function set-title {
+    echo -ne "\033]0;"$*"\007"
+}
+
 if [[ -e ~/.bashrc.local.gpl ]]
 then
   source ~/.bashrc.local.gpl
