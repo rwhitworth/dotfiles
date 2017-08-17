@@ -70,7 +70,7 @@ alias e='date +"%s"'
 alias ls='ls -la'
 alias sl='ls'
 alias docker-ip="docker inspect --format '{{.NetworkSettings.IPAddress}}'"
-alias dkill="for i in \$(docker ps -a --format=\'{{.ID}}\') ; do echo Killing \$i ; docker rm -f \$i ; done"
+alias dkill="for i in \$(docker ps -a | grep -v -E 'lc_shared|CONTAINER' | awk '{print \$1}') ; do echo Killing \$i ; docker rm -f \$i ; done"
 alias nonekill='for i in $(docker images | grep none | tr -s " " "Z" | cut -f 3 -dZ) ; do docker rmi $i ; done'
 
 # Returns the first element in a list.
